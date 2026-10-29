@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>那些我去過的旅遊足跡</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: #000;
+      min-height: 100vh;
+      padding: 20px 12px 40px;
+      color: #f9a8d4;
+      font-size: 14px;
+    }
+    h1 { text-align: center; font-size: 1.4rem; color: #f9a8d4; margin-bottom: 4px; }
+    .sub { text-align: center; font-size: 0.85rem; color: #9d174d; margin-bottom: 20px; }
+
+    .main {
+      max-width: 1000px;
+      margin: 0 auto 24px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .map-box {
+      position: relative;
+      flex: 1;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 0 25px rgba(244, 114, 182, 0.12);
+      background: #111;
+    }
+    .map-box img { width: 100%; height: auto; display: block; opacity: 0.92; }
+
+    .city-panel {
+      width: 210px;
+      background: #111;
+      border-radius: 14px;
+      border: 1px solid #3f3f46;
+      padding: 14px;
+      min-height: 280px;
+      display: none;
+    }
+    .city-panel.show { display: block; }
+    .city-panel h3 {
+      color: #fbbf24;
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #3f3f46;
+    }
+    .city-list { display: flex; flex-direction: column; gap: 6px; }
+    .city-item {
+      background: #1c1917;
+      color: #fbbf24;
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      border: 1px solid #fbbf24;
+      line-height: 1.3;
+    }
+
+    .dot {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #f472b6;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .dot.show {
+      opacity: 1;
+      box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.4);
+    }
+
+    .countries {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .country-btn {
+      background: #111;
+      border-radius: 12px;
+      border: 1px solid #3f3f46;
+      padding: 11px 8px;
+      text-align: center;
+      color: #f9a8d4;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-size: 0.85rem;
+      user-select: none;
+      line-height: 1.3;
+    }
+    .country-btn:hover { border-color: #f472b6; }
+    .country-btn.active {
+      color: #fbbf24;
+      border-color: #fbbf24;
+      background: #1c1917;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 36px;
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+
+    @media (max-width: 700px) {
+      .main { flex-direction: column; }
+      .city-panel { width: 100%; }
+      .countries { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🧱 那些我去過的旅遊足跡</h1>
+  <div class="sub">點擊下方國家，右側顯示城市，地圖出現對應位置</div>
+
+  <div class="main">
+    <div class="map-box">
+      <img src="lego-map.png" alt="樂高世界地圖">
+
+      <!-- 中國 -->
+      <div class="dot" id="dot-guangzhou" style="left:73%; top:42%;"></div>
+      <div class="dot" id="dot-foshan" style="left:72%; top:41%;"></div>
+      <div class="dot" id="dot-shenzhen" style="left:73.5%; top:43%;"></div>
+      <div class="dot" id="dot-zhuhai" style="left:72.8%; top:43.5%;"></div>
+      <div class="dot" id="dot-macau" style="left:73.3%; top:43.7%;"></div>
+      <div class="dot" id="dot-chengdu" style="left:70%; top:38%;"></div>
+      <div class="dot" id="dot-chongqing" style="left:71%; top:39%;"></div>
+      <div class="dot" id="dot-kunming" style="left:69%; top:42%;"></div>
+      <div class="dot" id="dot-dali" style="left:68.5%; top:41.5%;"></div>
+      <div class="dot" id="dot-xishuangbanna" style="left:69%; top:44%;"></div>
+      <div class="dot" id="dot-tengchong" style="left:68%; top:42.5%;"></div>
+      <div class="dot" id="dot-mangshi" style="left:68.2%; top:43%;"></div>
+      <div class="dot" id="dot-luoping" style="left:69.5%; top:41%;"></div>
+      <div class="dot" id="dot-yuanyang" style="left:69.2%; top:43.5%;"></div>
+      <div class="dot" id="dot-taipei" style="left:74%; top:40%;"></div>
+      <div class="dot" id="dot-kaohsiung" style="left:73.8%; top:41.5%;"></div>
+      <div class="dot" id="dot-hualien" style="left:74.2%; top:40.5%;"></div>
+      <div class="dot" id="dot-jiufen" style="left:74.1%; top:39.8%;"></div>
+      <div class="dot" id="dot-hongkong" style="left:73.8%; top:43%;"></div>
+      <div class="dot" id="dot-beijing" style="left:73%; top:34%;"></div>
+      <div class="dot" id="dot-shanghai" style="left:75%; top:38%;"></div>
+      <div class="dot" id="dot-hangzhou" style="left:74.5%; top:39%;"></div>
+      <div class="dot" id="dot-suzhou" style="left:74.8%; top:38.5%;"></div>
+      <div class="dot" id="dot-datong" style="left:72%; top:33%;"></div>
+      <div class="dot" id="dot-taiyuan" style="left:72.5%; top:35%;"></div>
+      <div class="dot" id="dot-hohhot" style="left:71.5%; top:32.5%;"></div>
+      <div class="dot" id="dot-baoding" style="left:72.8%; top:34.5%;"></div>
+      <div class="dot" id="dot-hainan" style="left:71%; top:46%;"></div>
+      <div class="dot" id="dot-guangdong" style="left:72.5%; top:42.5%;"></div>
+      <div class="dot" id="dot-guangxi" style="left:71%; top:43%;"></div>
+
+      <!-- 日本 -->
+      <div class="dot" id="dot-tokyo" style="left:81%; top:36%;"></div>
+      <div class="dot" id="dot-kyoto" style="left:80.3%; top:37%;"></div>
+      <div class="dot" id="dot-osaka" style="left:80.5%; top:37.5%;"></div>
+
+      <!-- 越南 -->
+      <div class="dot" id="dot-hanoi" style="left:70%; top:44%;"></div>
+      <div class="dot" id="dot-danang" style="left:70.8%; top:47%;"></div>
+      <div class="dot" id="dot-hoian" style="left:71%; top:47.5%;"></div>
+      <div class="dot" id="dot-nhatrang" style="left:71.2%; top:49%;"></div>
+      <div class="dot" id="dot-dalat" style="left:70.5%; top:49.5%;"></div>
+      <div class="dot" id="dot-hcm" style="left:70.5%; top:50.5%;"></div>
+      <div class="dot" id="dot-condao" style="left:70.5%; top:52%;"></div>
+
+      <!-- 泰國 -->
+      <div class="dot" id="dot-bangkok" style="left:69%; top:47%;"></div>
+      <div class="dot" id="dot-chiangmai" style="left:68.5%; top:45%;"></div>
+
+      <!-- 馬來西亞 -->
+      <div class="dot" id="dot-kl" style="left:70%; top:54%;"></div>
+      <div class="dot" id="dot-semporna" style="left:73%; top:53%;"></div>
+
+      <!-- 柬埔寨 -->
+      <div class="dot" id="dot-siemreap" style="left:71.5%; top:48.5%;"></div>
+
+      <!-- 歐洲等 -->
+      <div class="dot" id="dot-tromso" style="left:51%; top:18%;"></div>
+      <div class="dot" id="dot-oslo" style="left:51.5%; top:23%;"></div>
+      <div class="dot" id="dot-flam" style="left:50.5%; top:22%;"></div>
+      <div class="dot" id="dot-aurland" style="left:50.3%; top:21.5%;"></div>
+      <div class="dot" id="dot-copenhagen" style="left:50%; top:26%;"></div>
+      <div class="dot" id="dot-stockholm" style="left:51.5%; top:24%;"></div>
+      <div class="dot" id="dot-prague" style="left:49.5%; top:29%;"></div>
+      <div class="dot" id="dot-ck" style="left:49.8%; top:30.5%;"></div>
+      <div class="dot" id="dot-kutna" style="left:50%; top:29.5%;"></div>
+      <div class="dot" id="dot-budapest" style="left:51%; top:31%;"></div>
+      <div class="dot" id="dot-vienna" style="left:50%; top:31%;"></div>
+      <div class="dot" id="dot-salzburg" style="left:49%; top:32%;"></div>
+      <div class="dot" id="dot-hallstatt" style="left:49.2%; top:32.5%;"></div>
+      <div class="dot" id="dot-obertraun" style="left:49.3%; top:32.8%;"></div>
+      <div class="dot" id="dot-zurich" style="left:48.5%; top:30%;"></div>
+      <div class="dot" id="dot-amsterdam" style="left:49%; top:27%;"></div>
+
+      <div class="dot" id="dot-rome" style="left:49.5%; top:34.5%;"></div>
+      <div class="dot" id="dot-milan" style="left:48.5%; top:32%;"></div>
+      <div class="dot" id="dot-florence" style="left:49.2%; top:33.5%;"></div>
+      <div class="dot" id="dot-pisa" style="left:48.8%; top:33.8%;"></div>
+      <div class="dot" id="dot-cinque" style="left:48.5%; top:33.2%;"></div>
+      <div class="dot" id="dot-naples" style="left:50%; top:35.5%;"></div>
+      <div class="dot" id="dot-positano" style="left:50.2%; top:35.8%;"></div>
+      <div class="dot" id="dot-bari" style="left:51%; top:35%;"></div>
+      <div class="dot" id="dot-alberobello" style="left:51.2%; top:35.3%;"></div>
+      <div class="dot" id="dot-matera" style="left:50.8%; top:35.5%;"></div>
+      <div class="dot" id="dot-palermo" style="left:49.5%; top:36.5%;"></div>
+      <div class="dot" id="dot-cefalu" style="left:49.8%; top:36.3%;"></div>
+      <div class="dot" id="dot-catania" style="left:50.3%; top:37%;"></div>
+      <div class="dot" id="dot-taormina" style="left:50.5%; top:36.8%;"></div>
+      <div class="dot" id="dot-siracusa" style="left:50.6%; top:37.3%;"></div>
+      <div class="dot" id="dot-caltagirone" style="left:50.2%; top:37.1%;"></div>
+      <div class="dot" id="dot-augusta" style="left:50.4%; top:37.2%;"></div>
+
+      <div class="dot" id="dot-madrid" style="left:46%; top:34%;"></div>
+      <div class="dot" id="dot-barcelona" style="left:47.5%; top:33%;"></div>
+      <div class="dot" id="dot-segovia" style="left:46.2%; top:33.5%;"></div>
+
+      <div class="dot" id="dot-dubai" style="left:60%; top:40%;"></div>
+      <div class="dot" id="dot-doha" style="left:61%; top:41%;"></div>
+      <div class="dot" id="dot-seoul" style="left:79%; top:35%;"></div>
+    </div>
+
+    <div class="city-panel" id="cityPanel">
+      <h3 id="panelTitle">城市列表</h3>
+      <div class="city-list" id="cityList"></div>
+    </div>
+  </div>
+
+  <div class="countries">
+    <div class="country-btn" onclick="showCountry('中國 China', [
+      '廣州 Guangzhou','佛山 Foshan','深圳 Shenzhen','珠海 Zhuhai','澳門 Macau',
+      '成都 Chengdu','重慶 Chongqing','昆明 Kunming','大理 Dali','西雙版納 Xishuangbanna',
+      '騰沖 Tengchong','芒市 Mangshi','羅平 Luoping','元陽 Yuanyang',
+      '台北 Taipei','高雄 Kaohsiung','花蓮 Hualien','九份 Jiufen','香港 Hong Kong',
+      '北京 Beijing','上海 Shanghai','杭州 Hangzhou','蘇州 Suzhou',
+      '大同 Datong','太原 Taiyuan','呼和浩特 Hohhot','保定 Baoding',
+      '海南島 Hainan','廣東 Guangdong','廣西 Guangxi'
+    ], ['guangzhou','foshan','shenzhen','zhuhai','macau','chengdu','chongqing','kunming','dali','xishuangbanna','tengchong','mangshi','luoping','yuanyang','taipei','kaohsiung','hualien','jiufen','hongkong','beijing','shanghai','hangzhou','suzhou','datong','taiyuan','hohhot','baoding','hainan','guangdong','guangxi'])">🇨🇳 中國<br>China</div>
+
+    <div class="country-btn" onclick="showCountry('日本 Japan', ['東京 Tokyo','京都 Kyoto','大阪 Osaka'], ['tokyo','kyoto','osaka'])">🇯🇵 日本<br>Japan</div>
+
+    <div class="country-btn" onclick="showCountry('越南 Vietnam', ['河內 Hanoi','峴港 Da Nang','會安 Hoi An','芽莊 Nha Trang','大叻 Da Lat','胡志明市 Ho Chi Minh','昆山島 Con Dao'], ['hanoi','danang','hoian','nhatrang','dalat','hcm','condao'])">🇻🇳 越南<br>Vietnam</div>
+
+    <div class="country-btn" onclick="showCountry('泰國 Thailand', ['曼谷 Bangkok','清邁 Chiang Mai'], ['bangkok','chiangmai'])">🇹🇭 泰國<br>Thailand</div>
+
+    <div class="country-btn" onclick="showCountry('馬來西亞 Malaysia', ['吉隆坡 Kuala Lumpur','仙本那 Semporna'], ['kl','semporna'])">🇲🇾 馬來西亞<br>Malaysia</div>
+
+    <div class="country-btn" onclick="showCountry('柬埔寨 Cambodia', ['暹粒 Siem Reap'], ['siemreap'])">🇰🇭 柬埔寨<br>Cambodia</div>
+
+    <div class="country-btn" onclick="showCountry('挪威 Norway', ['特羅姆瑟 Tromsø','奧斯陸 Oslo','Flåm','Aurland'], ['tromso','oslo','flam','aurland'])">🇳🇴 挪威<br>Norway</div>
+
+    <div class="country-btn" onclick="showCountry('丹麥 Denmark', ['哥本哈根 Copenhagen'], ['copenhagen'])">🇩🇰 丹麥<br>Denmark</div>
+
+    <div class="country-btn" onclick="showCountry('瑞典 Sweden', ['斯德哥爾摩 Stockholm'], ['stockholm'])">🇸🇪 瑞典<br>Sweden</div>
+
+    <div class="country-btn" onclick="showCountry('捷克 Czechia', ['布拉格 Prague','Český Krumlov','Kutná Hora'], ['prague','ck','kutna'])">🇨🇿 捷克<br>Czechia</div>
+
+    <div class="country-btn" onclick="showCountry('匈牙利 Hungary', ['布達佩斯 Budapest'], ['budapest'])">🇭🇺 匈牙利<br>Hungary</div>
+
+    <div class="country-btn" onclick="showCountry('奧地利 Austria', ['維也納 Vienna','薩爾茨堡 Salzburg','哈爾斯塔特 Hallstatt','上特勞恩 Obertraun'], ['vienna','salzburg','hallstatt','obertraun'])">🇦🇹 奧地利<br>Austria</div>
+
+    <div class="country-btn" onclick="showCountry('義大利 Italy', [
+      '羅馬 Rome','米蘭 Milan','佛羅倫薩 Florence','比薩 Pisa','五漁村 Cinque Terre',
+      '那不勒斯 Naples','波西塔諾 Positano','巴里 Bari','Alberobello','Matera',
+      '巴勒莫 Palermo','Cefalù','卡塔尼亞 Catania','陶爾米納 Taormina','錫拉庫薩 Syracuse',
+      'Caltagirone','Augusta'
+    ], ['rome','milan','florence','pisa','cinque','naples','positano','bari','alberobello','matera','palermo','cefalu','catania','taormina','siracusa','caltagirone','augusta'])">🇮🇹 義大利<br>Italy</div>
+
+    <div class="country-btn" onclick="showCountry('西班牙 Spain', ['馬德里 Madrid','巴塞羅那 Barcelona','塞哥維亞 Segovia'], ['madrid','barcelona','segovia'])">🇪🇸 西班牙<br>Spain</div>
+
+    <div class="country-btn" onclick="showCountry('其他 Others', ['迪拜 Dubai','多哈 Doha','首爾 Seoul','蘇黎世 Zurich','阿姆斯特丹 Amsterdam'], ['dubai','doha','seoul','zurich','amsterdam'])">✈️ 其他<br>Others</div>
+  </div>
+
+  <footer>點擊國家卡片 → 右側顯示城市（中英）→ 地圖出現位置</footer>
+
+  <script>
+    function showCountry(name, cities, ids) {
+      document.querySelectorAll('.country-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.dot').forEach(d => d.classList.remove('show'));
+
+      event.currentTarget.classList.add('active');
+
+      const panel = document.getElementById('cityPanel');
+      const title = document.getElementById('panelTitle');
+      const list = document.getElementById('cityList');
+
+      panel.classList.add('show');
+      title.textContent = name;
+      list.innerHTML = cities.map(c => `<div class="city-item">${c}</div>`).join('');
+
+      ids.forEach(id => {
+        const dot = document.getElementById('dot-' + id);
+        if (dot) dot.classList.add('show');
+      });
+    }
+  </script>
+
+</body>
+</html>
